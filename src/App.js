@@ -1,23 +1,24 @@
-import logo from './logo.svg';
+
+import { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import OurComponent from './components/OurComponent';
-import ShowFullName from './components/ShowFullName';
-import Contador from './components/Contador';
+import BookForm from './components/BookForm';
+import BookList from './components/BookList/BookList';
+const initialBooks = [
+    { title: 'El quijote', dateRead: '2022-01-01' },
+    { title: 'El Martin Fierro', dateRead: '2021-01-01' }
+];
 function App (argumentos) {
-  /*
-    cuerpo de funcion: la logica del componente
-  */
-  // retorno JSX (bastante parecido a HTML): representacion - declarativa - de la UI
-  /* return (
-    createElement('div', argumentos, [
-      createElement('header', argumentos, [ ... ])
-    ])
-  ) */
-  console.log('cuerpo del App');
+  const [ books, setBooks ] = useState(initialBooks);
+  const onBookSubmitHandler = (book) => {
+    console.log(book);
+    setBooks((books) => [...books, book]);
+  } 
   return (
-    <div className="App">
-      <Contador valorInicial={10} />
-      <Contador valorInicial={0} />
+    <div className="container">
+      <h1>Books Champion</h1>
+      <BookForm onFormSubmit={onBookSubmitHandler} />
+      <BookList books={books} />
     </div>
   );
 }
