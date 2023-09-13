@@ -10,7 +10,10 @@ export default function BookForm ({ onFormSubmit }) {
         setDate(event.target.value);
     };
     const onAddClickHandler = () => {
-        let book = { title: title, dateRead: date };
+        let book = { 
+            title: title, 
+            dateRead: date,
+        };
         // addFun((books) => [...books, book]);
         onFormSubmit(book);
         setTitle('');
