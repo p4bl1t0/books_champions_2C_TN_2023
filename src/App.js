@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import BookForm from './components/BookForm';
 import BookList from './components/BookList/BookList';
+import If from './components/If';
 const initialBooks = [
     { title: 'El quijote', dateRead: '2022-01-01', lang: 'es' },
     { title: 'El Martin Fierro', dateRead: '2021-03-01', lang: 'es' },
@@ -45,7 +46,11 @@ function App (argumentos) {
           className='btn btn-secondary' 
           onClick={showButtonHandler}
         >
-          { showAddForm ? 'Ocultar formurlario' : 'Agregar lectura' } 
+          <If condition={showAddForm}>
+            <If.True>Ocultar formurlario</If.True>
+            <If.Else>Agregar lectura</If.Else>
+            <div>Esto no va a salir nunca.</div>
+          </If>
         </button>
       </h1>
       { showAddForm && <BookForm onFormSubmit={onBookSubmitHandler} /> }

@@ -2,8 +2,8 @@ import React from 'react';
 function If ({ condition, children}) {
     const childs = React.Children.toArray();
     return children.map((item) => {
-        if (condition && item instanceof If.True) return item;
-        if (!condition && item instanceof If.Else) return item;
+        if (condition && item.type === If.True) return item;
+        if (!condition && item.type === If.Else) return item;
         return <></>
     })
     
