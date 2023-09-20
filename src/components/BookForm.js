@@ -16,6 +16,8 @@ export default function BookForm ({ onFormSubmit }) {
     const [ authorLastnameError, setAuthorLastnameError ] = useState('');
     const [ dateError, setDateError ] = useState('');
 
+    const [ errors, setErrors ] = useState({});
+
     // Estado derivado
     let fullname = 'Defina un nombre'
     if (authorName && authorLastname) {
@@ -29,8 +31,45 @@ export default function BookForm ({ onFormSubmit }) {
     const onDateChangeHandler = (event) => { // event = Evento del DOM
         setDate(event.target.value);
     };
+
+    const validarForm = (fieldName) => {
+        let _errors = {};
+        if (!fieldName || fieldName === 'title') {
+            if (title === '') {
+                _errors = { ..._errors, title: 'El título tiene que estar completo.' };
+            } else if (title.length < 3) {
+                _errors = { ..._errors, title: 'El título tiene que tener mas de 3 caracteres.' }
+            } else {
+                // necesario para que si mostré un error y luego completé bien, se borre el error
+    
+                _errors = { ..._errors, title: undefined };
+            }
+        }
+        if (!fieldName || fieldName === 'authorName') {
+            if (authorName === '') {
+                _errors = { ..._errors, authorName: 'El nombre tiene que estar completo' };
+            } else {
+                // necesario para que si mostré un error y luego completé bien, se borre el error
+                
+                _errors = { ..._errors, authorName: undefined };
+            }
+        }
+
+        setErrors(_errors);
+        return _errors;
+    }
+
     const onAddClickHandler = () => {
-        if (titleError === '' && authorLastnameError === '' && authorName !== '' && date !== '') {
+        let formOk = true;
+        let _errors = validarForm();
+        Object.keys(_errors).forEach((key) => {
+            console.log(key, _errors[key])
+            if (_errors[key]) {
+                formOk = false;
+            }
+        });
+
+        if (formOk) {
 
             setDateError('');
             console.log('Libro agregado');
@@ -68,30 +107,29 @@ export default function BookForm ({ onFormSubmit }) {
     // y con [ data ] valores en las dependencias cuando cambia la depencia
     const onTitleBlurHandler = (event) => {
         // event.target.value  o title
-        if (title === '') {
-            setTitleError('El título tiene que estar completo');
-        } else if (title.length < 3) {
-            setTitleError('El título debe tener más de 3 caracteres.');
-        } else {
-            // necesario para que si mostré un error y luego completé bien, se borre el error
-            setTitleError('');
-        }
+        validarForm('title');
     };
 
     const onAuthorLastnameChangeHandler = (event) => {
         setLastname(event.target.value);
 
         if (event.target.value === '') {
-            setAuthorLastnameError('El apellido tiene que estar completo');
+            setErrors({ ...errors, authorLastname: 'El apellido tiene que estar completo' });
         } else if (event.target.value.length < 3) {
-            setAuthorLastnameError('El título debe tener más de 3 caracteres.');
+            setErrors({ ...errors, authorLastname:'El título debe tener más de 3 caracteres.' });
         } else if (!(new RegExp('([A-Za-z])+')).test(event.target.value)) {
-            setAuthorLastnameError('El autor solo puede contener letras.');
+            setErrors({ ...errors, authorLastname: 'El autor solo puede contener letras.' });
 
         } else {
             // necesario para que si mostré un error y luego completé bien, se borre el error
-            setAuthorLastnameError('');
+            
+            setErrors({ ...errors, authorLastname: undefined });
         }
+    }
+    const onNameChange = (event) => {
+        setName(event.target.value);
+
+        // validarForm('authorName');
     }
     return (
         <form>
@@ -107,8 +145,8 @@ export default function BookForm ({ onFormSubmit }) {
                         onChange={onTitleChangeHandler}
                         onBlur={onTitleBlurHandler}
                     />
-                    { titleError !== '' &&
-                        <div className="error">{ titleError }</div>
+                    { errors.title &&
+                        <div className="error">{ errors.title }</div>
                     }
                 </div>
                 <div>
@@ -118,10 +156,10 @@ export default function BookForm ({ onFormSubmit }) {
                         type="text"
                         className="form-control"
                         value={authorName} 
-                        onChange={(event) => setName(event.target.value)}
+                        onChange={onNameChange}
                     />
-                    { authorName === '' && 
-                        <div className="error">El campo de estar completo.</div>
+                    { errors.authorName && 
+                        <div className="error">{errors.authorName}</div>
                     }
                 </div>
                 <div>
@@ -134,8 +172,8 @@ export default function BookForm ({ onFormSubmit }) {
                         onChange={onAuthorLastnameChangeHandler}
                     />
 
-                    { authorLastnameError !== '' &&
-                        <div className="error">{ authorLastnameError }</div>
+                    { errors.authorLastname &&
+                        <div className="error">{ errors.authorLastname }</div>
                     }
                 </div>
                 <div>
