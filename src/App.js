@@ -15,14 +15,20 @@ const initialBooks = [
 function App (argumentos) {
   const [ loading, setLoading ] = useState(false);
   const [ books, setBooks ] = useState([]);
-  // Aclaración: hacemos un fake de carga, como si estuvieramos buscando datos a una API
   useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setBooks(initialBooks);
-      setLoading(false);
-    }, 3000);
+
+    async function fetchData() {
+      // You can await here
+      const booksResponse = await fetch('http://localhost:8000/books', {});
+      const books = await booksResponse.json();
+      console.log(books);
+      setBooks(books.map(book => ({ dateRead: `${book.year}-01-01`, ...book  })));
+      // ...
+    }
+    fetchData();
+    return () => {};
   }, []);
+  
   const onBookSubmitHandler = (book) => {
     console.log(book);
     setBooks((books) => [...books, book]);
@@ -31,12 +37,6 @@ function App (argumentos) {
   const showButtonHandler = () => {
     setShowAddForm(!showAddForm);
   }
-
-  const vinos = [
-    { name: 'Malbec' },
-    { name: 'Merlot' }
-  ] ;
-  console.log(vinos);
   return (
     <div className="container">
       <h1>
@@ -46,11 +46,13 @@ function App (argumentos) {
           className='btn btn-secondary' 
           onClick={showButtonHandler}
         >
-          <If condition={showAddForm}>
-            <If.True>Ocultar formurlario</If.True>
+          {/* <If condition={showAddForm}>
+            <If.True>
+              Ocultar formurlario
+            </If.True>
             <If.Else>Agregar lectura</If.Else>
-            <div>Esto no va a salir nunca.</div>
-          </If>
+          </If> */}
+          { showAddForm ?  'Ocultar formurlario' : 'Agregar lectura' }
         </button>
       </h1>
       { showAddForm && <BookForm onFormSubmit={onBookSubmitHandler} /> }

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BookItem from "./BookItem";
 import BooksFilter from "./BooksFilter";
 
@@ -12,6 +12,13 @@ function Books ({ books }) {
             { books.length === 0 && <div>No has cargados libros aún o ningún libro cumple con el filtro.</div> }
         </>
     )
+}
+
+function getBooksYear (books) {
+    const years = books.map((book) => book.year);
+    let uniqueYears = years.filter((year, index) => years.indexOf(year) === index);
+    // uniqueYears.sort 
+    return uniqueYears;
 }
 
 export default function BookList ({ books, loading }) {
@@ -30,6 +37,10 @@ export default function BookList ({ books, loading }) {
         }
     };
 
+    useEffect(() => {
+        setBooksFiltered(books);
+    }, [books]);
+
     
     const onYearChangeHandler = (year) => {
         // const booksFilter = books.filter(book => new Date(book.dateRead).getFullYear() === year);
@@ -45,7 +56,10 @@ export default function BookList ({ books, loading }) {
     return (
         <div>
             <h2>Libros leídos</h2>
-            <BooksFilter onYearChange={onYearChangeHandler} />
+            <BooksFilter 
+                onYearChange={onYearChangeHandler} 
+                years={getBooksYear(books)}
+            />
             <div className='books-wrapper'>
                 { loading && <div>Cargando libros ...</div> }
                 { !loading && <Books books={booksFiltered} /> }

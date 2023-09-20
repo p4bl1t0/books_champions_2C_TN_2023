@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-export default function BooksFilter ({ onYearChange }) {
+export default function BooksFilter ({ onYearChange, years }) {
     const [ yearSelected, setYearSelected ] = useState('');
     const yearChangeHandler = (event) => {
         setYearSelected(event.target.value);
@@ -11,11 +11,9 @@ export default function BooksFilter ({ onYearChange }) {
             <label htmlFor="year">Año de lectura</label>
             <select id="year" value={yearSelected} onChange={yearChangeHandler} >
                 <option value={''}></option>
-                <option value={2023}>2023</option>
-                <option value={2022}>2022</option>
-                <option value={2021}>2021</option>
-                <option value={2020}>2020</option>
-                <option value={2019}>2019</option>
+                { years.map((year) => (
+                    <option key={year} value={year}>{year}</option>
+                ))}
             </select>
             <p>Seleccione un año para arrancar a filtrar</p>
         </div>
