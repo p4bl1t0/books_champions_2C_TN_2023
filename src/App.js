@@ -14,10 +14,10 @@ const initialBooks = [
 ];
 function App (argumentos) {
   const [ loading, setLoading ] = useState(false);
-  const [ books, setBooks ] = useState([]);
+  const [ books, setBooks ] = useState(initialBooks);
   useEffect(() => {
 
-    async function fetchData() {
+    /* async function fetchData() {
       // You can await here
       const booksResponse = await fetch('http://localhost:8000/books', {});
       const books = await booksResponse.json();
@@ -25,7 +25,7 @@ function App (argumentos) {
       setBooks(books.map(book => ({ dateRead: `${book.year}-01-01`, ...book  })));
       // ...
     }
-    fetchData();
+    fetchData(); */
     return () => {};
   }, []);
   

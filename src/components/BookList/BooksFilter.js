@@ -11,8 +11,8 @@ export default function BooksFilter ({ onYearChange, years }) {
             <label htmlFor="year">Año de lectura</label>
             <select id="year" value={yearSelected} onChange={yearChangeHandler} >
                 <option value={''}></option>
-                { years.map((year) => (
-                    <option key={year} value={year}>{year}</option>
+                { years.map((year, index) => (
+                    <option key={index} value={year}>{year}</option>
                 ))}
             </select>
             <p>Seleccione un año para arrancar a filtrar</p>

@@ -10,8 +10,11 @@ import { useEffect, useState } from "react";
 
 export default function BookForm ({ onFormSubmit }) {
     const [ title, setTitle ] = useState('');
+    const [ titleError, setTitleError ] = useState('');
     const [ authorName, setName ] = useState('');
     const [ authorLastname, setLastname ] = useState('');
+    const [ authorLastnameError, setAuthorLastnameError ] = useState('');
+    const [ dateError, setDateError ] = useState('');
 
     // Estado derivado
     let fullname = 'Defina un nombre'
@@ -27,16 +30,28 @@ export default function BookForm ({ onFormSubmit }) {
         setDate(event.target.value);
     };
     const onAddClickHandler = () => {
-        let book = { 
-            title: title, 
-            dateRead: date,
-        };
-        // addFun((books) => [...books, book]);
-        onFormSubmit(book);
-        setTitle('');
-        setDate('');
+        if (titleError === '' && authorLastnameError === '' && authorName !== '' && date !== '') {
+
+            setDateError('');
+            console.log('Libro agregado');
+            /* let book = { 
+                title: title, 
+                dateRead: date,
+            };
+            // addFun((books) => [...books, book]);
+            onFormSubmit(book);
+            setTitle('');
+            setLastname('');
+            setName('');
+            setDate(''); */
+        } else {
+
+            if (date === '') {
+                setDateError('La fecha debe estar completa.')
+            }
+        }
     };
-    useEffect(() => {
+    /* useEffect(() => {
         console.log('BookForm mounted');
         const timerId = setInterval(() => {
             console.log('contador sucediendo');
@@ -49,13 +64,39 @@ export default function BookForm ({ onFormSubmit }) {
             console.log('BookForm unmounted');
             clearInterval(timerId);
         }
-    }, []); // undefined --> cada vez que se renderiza nuevamente, [] --> solo en el montado 
+    }, []); */ // undefined --> cada vez que se renderiza nuevamente, [] --> solo en el montado 
     // y con [ data ] valores en las dependencias cuando cambia la depencia
- 
+    const onTitleBlurHandler = (event) => {
+        // event.target.value  o title
+        if (title === '') {
+            setTitleError('El título tiene que estar completo');
+        } else if (title.length < 3) {
+            setTitleError('El título debe tener más de 3 caracteres.');
+        } else {
+            // necesario para que si mostré un error y luego completé bien, se borre el error
+            setTitleError('');
+        }
+    };
+
+    const onAuthorLastnameChangeHandler = (event) => {
+        setLastname(event.target.value);
+
+        if (event.target.value === '') {
+            setAuthorLastnameError('El apellido tiene que estar completo');
+        } else if (event.target.value.length < 3) {
+            setAuthorLastnameError('El título debe tener más de 3 caracteres.');
+        } else if (!(new RegExp('([A-Za-z])+')).test(event.target.value)) {
+            setAuthorLastnameError('El autor solo puede contener letras.');
+
+        } else {
+            // necesario para que si mostré un error y luego completé bien, se borre el error
+            setAuthorLastnameError('');
+        }
+    }
     return (
         <form>
             <div>
-                <h2>Añadir formulario { seconds }</h2>
+                <h2>Añadir formulario</h2>
                 <div>
                     <label htmlFor="title" className="form-label">Título</label>
                     <input 
@@ -64,7 +105,11 @@ export default function BookForm ({ onFormSubmit }) {
                         className="form-control"
                         value={title} 
                         onChange={onTitleChangeHandler}
+                        onBlur={onTitleBlurHandler}
                     />
+                    { titleError !== '' &&
+                        <div className="error">{ titleError }</div>
+                    }
                 </div>
                 <div>
                     <label htmlFor="name" className="form-label">Nombre autor</label>
@@ -75,6 +120,9 @@ export default function BookForm ({ onFormSubmit }) {
                         value={authorName} 
                         onChange={(event) => setName(event.target.value)}
                     />
+                    { authorName === '' && 
+                        <div className="error">El campo de estar completo.</div>
+                    }
                 </div>
                 <div>
                     <label htmlFor="lastname" className="form-label">Apellido</label>
@@ -83,8 +131,12 @@ export default function BookForm ({ onFormSubmit }) {
                         type="text"
                         className="form-control"
                         value={authorLastname} 
-                        onChange={(event) => setLastname(event.target.value)}
+                        onChange={onAuthorLastnameChangeHandler}
                     />
+
+                    { authorLastnameError !== '' &&
+                        <div className="error">{ authorLastnameError }</div>
+                    }
                 </div>
                 <div>
                     <label htmlFor="dateRead" className="form-label">Fecha</label>
@@ -95,6 +147,9 @@ export default function BookForm ({ onFormSubmit }) {
                         value={date} 
                         onChange={onDateChangeHandler}
                     />
+                    { dateError !== '' && 
+                        <div className="error">{dateError}</div>
+                    }
                 </div>
                 <button type="button" onClick={onAddClickHandler} className="btn btn-primary">
                     Agregar libro de { fullname }
